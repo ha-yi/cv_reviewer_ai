@@ -1,0 +1,444 @@
+# Programming Languages
+python
+java
+javascript
+typescript
+c++
+c#
+ruby
+php
+swift
+kotlin
+rust
+golang
+scala
+perl
+r
+matlab
+bash
+shell
+dart
+cobol
+fortran
+pascal
+ada
+lisp
+haskell
+erlang
+elixir
+clojure
+f#
+ocaml
+julia
+lua
+groovy
+objective-c
+assembly
+vhdl
+verilog
+prolog
+scheme
+smalltalk
+crystal
+nim
+zig
+vlang
+ballerina
+powershell
+visual basic
+delphi
+abap
+
+
+# Web & Frontend
+html
+css
+sass
+less
+react
+angular
+vue
+jquery
+bootstrap
+webpack
+babel
+nodejs
+node.js
+express
+nextjs
+gatsby
+
+# Backend & Frameworks
+django
+flask
+fastapi
+spring
+hibernate
+rails
+laravel
+
+# Databases
+sql
+mysql
+postgresql
+mongodb
+redis
+elasticsearch
+cassandra
+oracle
+dynamodb
+mariadb
+sqlite
+realm
+sqlite mobile
+couchbase lite
+firebase realtime database
+firebase firestore
+objectbox
+greenDAO
+room
+core data
+wcf
+
+
+# Cloud & DevOps
+aws
+azure
+gcp
+docker
+kubernetes
+jenkins
+gitlab
+terraform
+ansible
+prometheus
+grafana
+nginx
+apache
+
+# Tools & Practices
+git
+svn
+ci/cd
+rest
+graphql
+soap
+api
+microservices
+junit
+pytest
+selenium
+jira
+confluence
+agile
+scrum 
+
+# Mobile Frameworks
+react native
+flutter
+ionic
+xamarin
+android sdk
+ios sdk
+swift ui
+jetpack compose
+cordova
+phonegap
+kotlin
+java
+objective-c
+swift
+ios
+android
+
+
+# AI & ML Frameworks
+tensorflow
+pytorch
+keras
+scikit-learn
+opencv
+pandas
+numpy
+matplotlib
+hugging face
+transformers
+nltk
+spacy
+fastai
+mlflow
+ray
+langchain
+openai
+stable diffusion
+llama
+chatgpt
+bert
+gpt
+llm
+neural networks
+deep learning
+computer vision
+natural language processing
+nlp
+reinforcement learning
+machine learning
+artificial intelligence
+ai
+ml
+
+# IoT & Embedded Systems
+arduino
+raspberry pi
+mqtt
+zigbee
+bluetooth
+ble
+esp32
+esp8266
+modbus
+plc
+rtos
+embedded c
+embedded linux
+can bus
+i2c
+spi
+serial communication
+iot protocols
+sensors
+actuators
+microcontrollers
+fpga
+arm
+avr
+stm32
+iot security
+iot analytics
+iot cloud platforms
+aws iot
+azure iot
+google cloud iot
+
+# Game Development
+unity
+unreal engine
+godot
+gamemaker studio
+phaser
+pygame
+cocos2d
+libgdx
+monogame
+sfml
+directx
+opengl
+vulkan
+webgl
+game physics
+3d modeling
+3d animation
+blender
+maya
+3ds max
+game ai
+level design
+game networking
+multiplayer
+game optimization
+shader programming
+game audio
+game ui/ux
+game mechanics
+game balancing
+game prototyping
+game testing
+game debugging
+procedural generation
+character rigging
+texture mapping
+particle systems
+game engines
+game scripting
+game development frameworks
+game development tools
+game development pipelines
+game development lifecycle
+game development methodologies
+game development best practices
+
+# Game Development Tools
+git
+github
+gitlab
+bitbucket
+perforce
+plastic scm
+sourcetree
+visual studio
+visual studio code
+rider
+gamemaker studio
+unity hub
+unreal editor
+godot editor
+android studio
+xcode
+cmake
+make
+gradle
+jenkins
+jira
+trello
+asana
+confluence
+slack
+discord
+microsoft teams
+notion
+figma
+adobe photoshop
+adobe illustrator
+adobe after effects
+substance painter
+substance designer
+zbrush
+houdini
+audacity
+fmod
+wwise
+havok
+physx
+speedtree
+articy:draft
+twine
+ink
+yarn
+
+
+# IDEs & Development Tools
+eclipse
+intellij idea
+pycharm
+webstorm
+phpstorm
+rubymine
+netbeans
+sublime text
+atom
+brackets
+vim
+emacs
+notepad++
+android studio
+qt creator
+codeblocks
+clion
+goland
+datagrip
+rider
+visual studio
+visual studio code
+xcode
+dreamweaver
+komodo ide
+aptana studio
+cloud9
+replit
+gitpod
+aws cloud9
+
+# Development Tools & Utilities
+git
+svn
+mercurial
+docker
+kubernetes
+vagrant
+virtualbox
+vmware
+postman
+insomnia
+filezilla
+putty
+winscp
+wireshark
+fiddler
+charles proxy
+sourcetree
+gitkraken
+github desktop
+terminal
+iterm2
+cmder
+powershell
+bash
+zsh
+maven
+gradle
+ant
+npm
+yarn
+pip
+composer
+nuget
+homebrew
+chocolatey
+
+
+# Cloud Technologies & Services
+aws
+amazon web services
+ec2
+s3
+lambda
+cloudfront
+route53
+rds
+dynamodb
+elasticache
+sqs
+sns
+cloudwatch
+iam
+vpc
+eks
+ecs
+azure
+microsoft azure
+azure functions
+azure storage
+azure sql
+azure cosmos db
+azure devops
+azure kubernetes service
+gcp
+google cloud platform
+google compute engine
+google cloud storage
+google cloud functions
+google bigquery
+google kubernetes engine
+cloud run
+firebase
+heroku
+digitalocean
+linode
+oracle cloud
+ibm cloud
+alibaba cloud
+openstack
+cloudflare
+netlify
+vercel
+serverless
+cloud computing
+iaas
+paas
+saas
+cloud security
+cloud migration
+cloud architecture
+multi-cloud
+hybrid cloud
+cloud native

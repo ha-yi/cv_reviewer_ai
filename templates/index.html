@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV-Job Matcher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">CV-Job Matcher</h1>
+        <div class="card">
+            <div class="card-body">
+                <form id="matchForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="cv" class="form-label">Upload your CV/Resume (PDF, DOCX, or TXT)</label>
+                        <input type="file" class="form-control" id="cv" name="cv" accept=".pdf,.docx,.txt" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="job_url" class="form-label">Job Listing URL</label>
+                        <input type="url" class="form-control" id="job_url" name="job_url" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Analyze Match</button>
+                </form>
+            </div>
+        </div>
+        
+        <div id="results" class="mt-4" style="display: none;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Analysis Results</h5>
+                    <div id="matchScore"></div>
+                    <div id="matchDetails"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('matchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const resultsDiv = document.getElementById('results');
+            const matchScore = document.getElementById('matchScore');
+            const matchDetails = document.getElementById('matchDetails');
+            
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.style.display = 'block';
+                    matchScore.innerHTML = `<h4>Match Score: ${data.match_percentage}%</h4>`;
+                    matchDetails.innerHTML = `
+                        <h5>Key Matches:</h5>
+                        <ul>
+                            ${data.matches.map(match => `<li>${match}</li>`).join('')}
+                        </ul>
+                        <h5>Missing Skills:</h5>
+                        <ul>
+                            ${data.missing_skills.map(skill => `<li>${skill}</li>`).join('')}
+                        </ul>
+                    `;
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('An error occurred during analysis');
+            }
+        });
+    </script>
+</body>
+</html> 
