@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 import os
 from cv_matcher import CVMatcher
@@ -6,6 +6,7 @@ from cv_matcher import CVMatcher
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.secret_key = 'your-secret-key-here'  # Required for flashing messages
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -19,31 +20,66 @@ def allowed_file(filename):
 def index():
     return render_template('index.html')
 
-@app.route('/analyze', methods=['POST'])
+@app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
-    if 'cv' not in request.files:
-        return jsonify({'error': 'No CV file uploaded'}), 400
+    if request.method == 'GET':
+        return redirect(url_for('index'))
     
-    cv_file = request.files['cv']
+    # Debug prints
+    print("Files:", request.files)
+    print("Form:", request.form)
+    
+    if 'file' not in request.files:
+        flash('No file uploaded')
+        return redirect(url_for('index'))
+    
+    file = request.files['file']
     job_url = request.form.get('job_url')
     
-    if not job_url:
-        return jsonify({'error': 'No job URL provided'}), 400
+    print(f"Filename: {file.filename}")
+    print(f"Job URL: {job_url}")
     
-    if cv_file and allowed_file(cv_file.filename):
-        filename = secure_filename(cv_file.filename)
+    if file.filename == '':
+        flash('No file selected')
+        return redirect(url_for('index'))
+    
+    if not job_url:
+        flash('No job URL provided')
+        return redirect(url_for('index'))
+    
+    if not allowed_file(file.filename):
+        flash('Invalid file type. Please upload PDF, DOCX, or TXT file.')
+        return redirect(url_for('index'))
+    
+    try:
+        filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        cv_file.save(filepath)
+        file.save(filepath)
+        print(f"File saved to: {filepath}")
         
         matcher = CVMatcher()
         results = matcher.analyze(filepath, job_url)
         
-        # Clean up uploaded file
-        os.remove(filepath)
+        # Clean up the uploaded file
+        if os.path.exists(filepath):
+            os.remove(filepath)
         
-        return jsonify(results)
-    
-    return jsonify({'error': 'Invalid file type'}), 400
+        if not results:
+            flash('Analysis failed - no results returned')
+            return redirect(url_for('index'))
+        
+        return jsonify({
+            'match_percentage': results['match_percentage'],
+            'matches': results['matches'],
+            'missing_skills': results['missing_skills'],
+            'experience_analysis': results['experience_analysis']
+        })
+    except Exception as e:
+        print(f"Error during analysis: {str(e)}")
+        # Clean up the uploaded file in case of error
+        if os.path.exists(filepath):
+            os.remove(filepath)
+        return render_template('error.html', error=str(e))
 
 if __name__ == '__main__':
     app.run(debug=True) 

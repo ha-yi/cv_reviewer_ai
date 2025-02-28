@@ -1,0 +1,132 @@
+<!-- Add this section after the existing skills matching section -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h3>Experience Analysis</h3>
+    </div>
+    <div class="card-body">
+        {% if experience_analysis %}
+            {% if experience_analysis.error %}
+                <div class="alert alert-warning">
+                    {{ experience_analysis.error }}
+                </div>
+            {% else %}
+                <!-- Years of Experience -->
+                <div class="mb-4">
+                    <h4>Years of Experience</h4>
+                    <p>{{ experience_analysis.years_of_experience }} years</p>
+                </div>
+
+                <!-- Key Skills -->
+                <div class="mb-4">
+                    <h4>Key Skills Analysis</h4>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Skill</th>
+                                    <th>Proficiency</th>
+                                    <th>Frequency</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for skill in experience_analysis.key_skills %}
+                                <tr>
+                                    <td>{{ skill.skill }}</td>
+                                    <td>
+                                        <span class="badge {% if skill.proficiency == 'Expert' %}bg-success
+                                            {% elif skill.proficiency == 'Advanced' %}bg-primary
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ skill.proficiency }}
+                                        </span>
+                                    </td>
+                                    <td>{{ skill.frequency }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Domain Expertise -->
+                <div class="mb-4">
+                    <h4>Domain Expertise</h4>
+                    <div class="row">
+                        {% for domain in experience_analysis.domain_expertise %}
+                        <div class="col-md-4 mb-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ domain.domain }}</h5>
+                                    <p class="card-text">
+                                        Level: <span class="badge {% if domain.level == 'Expert' %}bg-success
+                                            {% elif domain.level == 'Advanced' %}bg-primary
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ domain.level }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Leadership Experience -->
+                <div class="mb-4">
+                    <h4>Leadership Experience</h4>
+                    <div class="card">
+                        <div class="card-body">
+                            <p><strong>Level:</strong> {{ experience_analysis.leadership_experience.leadership_level.level }}</p>
+                            {% if experience_analysis.leadership_experience.team_size > 0 %}
+                            <p><strong>Largest Team Size:</strong> {{ experience_analysis.leadership_experience.team_size }} people</p>
+                            {% endif %}
+                            {% if experience_analysis.leadership_experience.managed_projects > 0 %}
+                            <p><strong>Projects Managed:</strong> {{ experience_analysis.leadership_experience.managed_projects }}</p>
+                            {% endif %}
+                            {% if experience_analysis.leadership_experience.leadership_roles %}
+                            <p><strong>Leadership Roles:</strong></p>
+                            <ul>
+                                {% for role in experience_analysis.leadership_experience.leadership_roles %}
+                                <li>{{ role }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Highlights -->
+                <div class="mb-4">
+                    <h4>Project Highlights</h4>
+                    {% for project in experience_analysis.project_highlights %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <p class="card-text">{{ project.description }}</p>
+                            {% if project.technologies %}
+                            <p class="mb-0"><small class="text-muted">
+                                Technologies: {{ project.technologies|join(", ") }}
+                            </small></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Recommendations -->
+                {% if experience_analysis.recommendations %}
+                <div class="mb-4">
+                    <h4>Recommendations</h4>
+                    <ul class="list-group">
+                        {% for recommendation in experience_analysis.recommendations %}
+                        <li class="list-group-item">{{ recommendation }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info">
+                No experience analysis available.
+            </div>
+        {% endif %}
+    </div>
+</div> 

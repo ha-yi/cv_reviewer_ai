@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import PyPDF2
 import docx
 import re
+from experience_analyzer import ExperienceAnalyzer
 
 def load_data_file(filename):
     """Load data from a .dt file, handling both single words and phrases"""
@@ -323,7 +324,8 @@ class CVMatcher:
             return {
                 'match_percentage': 0.0,
                 'matches': [],
-                'missing_skills': []
+                'missing_skills': [],
+                'experience_analysis': None
             }
         
         # Extract skills
@@ -337,6 +339,10 @@ class CVMatcher:
         # Calculate overall similarity
         match_percentage = self.calculate_similarity(cv_text, job_text)
         
+        # Analyze experience
+        experience_analyzer = ExperienceAnalyzer()
+        experience_analysis = experience_analyzer.analyze_experience(cv_text)
+        
         # Filter out any remaining noise from skills
         matching_skills = {skill for skill in matching_skills 
                           if not any(exclude in skill.lower() for exclude in self.exclude_words)}
@@ -346,5 +352,6 @@ class CVMatcher:
         return {
             'match_percentage': round(match_percentage, 2),
             'matches': sorted(list(matching_skills)),
-            'missing_skills': sorted(list(missing_skills))
+            'missing_skills': sorted(list(missing_skills)),
+            'experience_analysis': experience_analysis
         } 
