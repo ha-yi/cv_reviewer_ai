@@ -48,6 +48,7 @@ An AI-powered CV analysis tool that matches resumes against job descriptions and
 
 3. Start the application:
 ```
+   source venv/bin/activate # run this to activate the virtual environment if not already activated
    ./run.sh
 ```
 
