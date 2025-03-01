@@ -50,6 +50,7 @@
                     <div id="matchScore"></div>
                     <div id="matchDetails"></div>
                     <div id="experienceAnalysis"></div>
+                    <div id="cvReview"></div>
                 </div>
             </div>
         </div>
@@ -182,6 +183,57 @@
             `;
         }
 
+        function formatCVReview(review) {
+            if (!review || review.error) {
+                return '<div class="alert alert-warning">CV review not available</div>';
+            }
+
+            return `
+                <div class="mt-4">
+                    <h4>CV Review</h4>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5>Overall Score: ${review.overall_score.toFixed(1)}%</h5>
+                            <div class="progress mb-3">
+                                <div class="progress-bar ${review.overall_score >= 80 ? 'bg-success' : 
+                                                         review.overall_score >= 60 ? 'bg-warning' : 
+                                                         'bg-danger'}" 
+                                     role="progressbar" 
+                                     style="width: ${review.overall_score}%">
+                                </div>
+                            </div>
+                            
+                            <h6>Detailed Checks:</h6>
+                            <div class="list-group">
+                                ${review.checks.map(check => `
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-1">${check.name}</h6>
+                                            <span class="badge ${check.status === 'pass' ? 'bg-success' : 
+                                                               check.status === 'warning' ? 'bg-warning' : 
+                                                               'bg-danger'}">
+                                                ${check.status}
+                                            </span>
+                                        </div>
+                                        <p class="mb-1">${check.message}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            ${review.recommendations.length ? `
+                                <h6 class="mt-3">Recommendations:</h6>
+                                <ul class="list-group">
+                                    ${review.recommendations.map(rec => 
+                                        `<li class="list-group-item">${rec}</li>`
+                                    ).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         document.getElementById('analyzeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -222,6 +274,12 @@
                     
                     document.getElementById('experienceAnalysis').innerHTML = 
                         formatExperienceAnalysis(data.experience_analysis);
+                    
+                    // Add CV Review section
+                    if (data.cv_review) {
+                        document.getElementById('cvReview').innerHTML = 
+                            formatCVReview(data.cv_review);
+                    }
                 } else {
                     alert(data.error || 'Analysis failed');
                 }

@@ -1,0 +1,117 @@
+{
+    "rules": [
+        {
+            "id": "page_length",
+            "name": "Page Length Check",
+            "description": "CV should be 1-2 pages, unless for highly specialized fields",
+            "check_method": "pdf_page_counter",
+            "model": null,
+            "severity": "warning",
+            "exceptions": ["research", "academic", "senior scientist", "principal", "distinguished"]
+        },
+        {
+            "id": "summary_quality",
+            "name": "Professional Summary Quality",
+            "description": "Start with strong summary (max 10 sentences) containing strength, experience, and value proposition",
+            "check_method": "nlp_summary_analyzer",
+            "model": "gpt2-medium",
+            "criteria": {
+                "max_sentences": 10,
+                "required_elements": ["strength", "experience", "value"]
+            },
+            "severity": "error"
+        },
+        {
+            "id": "achievement_focus",
+            "name": "Achievement-Oriented Language",
+            "description": "Use achiever words instead of doer words",
+            "check_method": "keyword_analysis",
+            "model": "bert-base-uncased",
+            "word_lists": {
+                "achiever_words": "data/achiever_words.dt",
+                "doer_words": "data/doer_words.dt"
+            },
+            "severity": "warning"
+        },
+        {
+            "id": "keyword_matching",
+            "name": "Job Keywords Match",
+            "description": "Use relevant keywords from job description",
+            "check_method": "keyword_matcher",
+            "model": "sentence-transformers/paraphrase-MiniLM-L6-v2",
+            "severity": "error"
+        },
+        {
+            "id": "skills_highlight",
+            "name": "Skills in Job History",
+            "description": "Technical and soft skills should be highlighted in job histories",
+            "check_method": "skills_context_analyzer",
+            "model": "bert-base-uncased",
+            "skill_sources": ["techskills.dt", "softskills.dt"],
+            "severity": "warning"
+        },
+        {
+            "id": "visual_clarity",
+            "name": "Visual Format Check",
+            "description": "Clean and professional format without distracting elements",
+            "check_method": "visual_analyzer",
+            "model": null,
+            "checks": [
+                "text_clarity",
+                "background_noise",
+                "spacing_consistency",
+                "font_consistency"
+            ],
+            "severity": "error"
+        },
+        {
+            "id": "cliche_phrases",
+            "name": "Cliché Detection",
+            "description": "Avoid generic or overused phrases",
+            "check_method": "phrase_analyzer",
+            "model": "roberta-base",
+            "phrases_file": "data/cliche_phrases.dt",
+            "severity": "warning"
+        },
+        {
+            "id": "professional_links",
+            "name": "Professional Links Check",
+            "description": "Include professional links (LinkedIn, GitHub, etc.) but not personal social media",
+            "check_method": "link_analyzer",
+            "model": null,
+            "allowed_domains": [
+                "linkedin.com",
+                "github.com",
+                "gitlab.com",
+                "stackoverflow.com",
+                "medium.com",
+                "dev.to",
+                "behance.net",
+                "dribbble.com"
+            ],
+            "blocked_domains": [
+                "facebook.com",
+                "instagram.com",
+                "tiktok.com",
+                "twitter.com",
+                "snapchat.com"
+            ],
+            "exceptions": ["professional portfolio"],
+            "severity": "warning"
+        },
+        {
+            "id": "language_quality",
+            "name": "Language Quality Check",
+            "description": "Check spelling and grammar",
+            "check_method": "language_checker",
+            "model": "languagetool-spacy",
+            "checks": [
+                "spelling",
+                "grammar",
+                "punctuation",
+                "style"
+            ],
+            "severity": "error"
+        }
+    ]
+} 

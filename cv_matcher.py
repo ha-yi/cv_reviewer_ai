@@ -343,6 +343,10 @@ class CVMatcher:
         experience_analyzer = ExperienceAnalyzer()
         experience_analysis = experience_analyzer.analyze_experience(cv_text)
         
+        # Update years of experience
+        if experience_analysis:
+            experience_analysis['years_of_experience'] = self._extract_total_experience(cv_text)
+        
         # Filter out any remaining noise from skills
         matching_skills = {skill for skill in matching_skills 
                           if not any(exclude in skill.lower() for exclude in self.exclude_words)}
@@ -354,4 +358,163 @@ class CVMatcher:
             'matches': sorted(list(matching_skills)),
             'missing_skills': sorted(list(missing_skills)),
             'experience_analysis': experience_analysis
-        } 
+        }
+
+    def _extract_experience_section(self, text: str) -> str:
+        """Extract the employment history section"""
+        section_headers = [
+            'employment history',
+            'work experience',
+            'professional experience',
+            'experience',
+            'work history',
+            'career history',
+            'employment'  # Add shorter variations
+        ]
+        
+        lines = text.split('\n')
+        start_idx = -1
+        end_idx = len(lines)
+        
+        # Find start of experience section
+        for i, line in enumerate(lines):
+            line_lower = line.lower().strip()
+            if any(header.lower() in line_lower for header in section_headers):
+                start_idx = i
+                print(f"Found experience section start: '{line}'")
+                break
+        
+        if start_idx == -1:
+            print("No experience section found")
+            return ""
+        
+        # Find end of experience section
+        next_sections = ['education', 'skills', 'projects', 'certifications', 'awards', 'references']
+        for i in range(start_idx + 1, len(lines)):
+            line_lower = lines[i].lower().strip()
+            if any(section.lower() in line_lower for section in next_sections):
+                end_idx = i
+                print(f"Found experience section end: '{lines[i]}'")
+                break
+        
+        section_text = '\n'.join(lines[start_idx:end_idx])
+        print("\nExtracted work section:")
+        print("-------------------")
+        print(section_text)
+        print("-------------------")
+        return section_text
+
+    def _extract_total_experience(self, text: str) -> float:
+        """Extract total years of experience from employment history"""
+        # First find the employment/experience section
+        work_section = self._extract_experience_section(text)
+        if not work_section:
+            return 0.0
+        
+        # Process text with spaCy to help with date extraction
+        doc = self.nlp(work_section)
+        
+        # Month names for parsing
+        months = r'(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)'
+        
+        years_list = []
+        ranges = []  # Initialize ranges list
+        current_year = 2025
+        
+        # Use spaCy's entity recognition for dates
+        date_entities = [(ent.text, ent.label_) for ent in doc.ents if ent.label_ == 'DATE']
+        print(f"Found date entities: {date_entities}")
+        
+        # First try to extract from spaCy's date entities
+        for date_text, _ in date_entities:
+            # Look for year patterns in recognized dates
+            year_match = re.search(r'(\d{4})', date_text)
+            if year_match:
+                year = int(year_match.group(1))
+                if 1960 <= year <= current_year:
+                    print(f"Found year from entity: {year}")
+                    years_list.append(year)
+        
+        # Sort years to find ranges
+        if years_list:
+            years_list.sort()
+            for i in range(0, len(years_list)-1, 2):
+                start_year = years_list[i]
+                end_year = years_list[i+1] if i+1 < len(years_list) else current_year
+                if start_year < end_year:
+                    duration = end_year - start_year
+                    if 0 <= duration <= 50:  # Sanity check
+                        ranges.append(duration)
+                        print(f"Added duration: {duration} years ({start_year}-{end_year})")
+        
+        # Fallback to regex if no valid ranges found
+        if not ranges:
+            # Extract date ranges using various formats
+            date_patterns = [
+                # Full date ranges with months (June 2020 - July 2023)
+                fr'({months}\s+\d{{4}})\s*[-–—to]+\s*({months}\s+\d{{4}}|present|current|now)',
+                
+                # Full date ranges (2020 - 2023)
+                r'(\d{4})\s*[-–—to]+\s*(\d{4}|present|current|now)',
+                
+                # Month/Year ranges (01/2020 - present)
+                r'(?:\d{1,2}/)?(\d{4})\s*[-–—to]+\s*(?:(?:\d{1,2}/)?(\d{4})|present|current|now)',
+            ]
+            
+            for pattern in date_patterns:
+                matches = re.finditer(pattern, work_section, re.IGNORECASE)
+                for match in matches:
+                    try:
+                        # Extract start date
+                        start_date = match.group(1)
+                        if re.search(months, start_date, re.IGNORECASE):
+                            # If it's a month year format
+                            year_match = re.search(r'(\d{4})', start_date)
+                            if year_match:
+                                start_year = int(year_match.group(1))
+                            else:
+                                continue
+                        else:
+                            start_year = int(start_date)
+                        
+                        print(f"Found start date: {start_date} -> {start_year}")
+                        
+                        # Extract end date
+                        try:
+                            end_date = match.group(2)
+                        except IndexError:
+                            end_date = 'present'
+                        
+                        if end_date and end_date.lower() not in ['present', 'current', 'now']:
+                            if re.search(months, end_date, re.IGNORECASE):
+                                year_match = re.search(r'(\d{4})', end_date)
+                                if year_match:
+                                    end_year = int(year_match.group(1))
+                                else:
+                                    end_year = current_year
+                            else:
+                                end_year = int(end_date)
+                        else:
+                            end_year = current_year
+                        
+                        print(f"Found end date: {end_date} -> {end_year}")
+                        
+                        if 1960 <= start_year <= current_year and start_year <= end_year:
+                            duration = end_year - start_year
+                            if 0 <= duration <= 50:  # Sanity check
+                                ranges.append(duration)
+                                print(f"Added duration: {duration} years")
+                    
+                    except (ValueError, AttributeError) as e:
+                        print(f"Error processing date: {e}")
+                        continue
+        
+        print(f"\nFound experience periods: {ranges}")
+        
+        total_years = sum(ranges) if ranges else 0
+        if total_years > 50:
+            total_years = 50
+        
+        final_years = round(total_years * 2) / 2
+        print(f"Final calculated experience: {final_years} years")
+        return final_years 

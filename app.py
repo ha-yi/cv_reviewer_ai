@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, f
 from werkzeug.utils import secure_filename
 import os
 from cv_matcher import CVMatcher
+from cv_reviewer import CVReviewer
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -60,19 +61,24 @@ def analyze():
         matcher = CVMatcher()
         results = matcher.analyze(filepath, job_url)
         
-        # Clean up the uploaded file
-        if os.path.exists(filepath):
-            os.remove(filepath)
-        
         if not results:
             flash('Analysis failed - no results returned')
             return redirect(url_for('index'))
+        
+        # Add CV review
+        reviewer = CVReviewer()
+        review_results = reviewer.review_cv(filepath, job_url)
+        
+        # Clean up the uploaded file after all analysis is complete
+        if os.path.exists(filepath):
+            os.remove(filepath)
         
         return jsonify({
             'match_percentage': results['match_percentage'],
             'matches': results['matches'],
             'missing_skills': results['missing_skills'],
-            'experience_analysis': results['experience_analysis']
+            'experience_analysis': results['experience_analysis'],
+            'cv_review': review_results
         })
     except Exception as e:
         print(f"Error during analysis: {str(e)}")
